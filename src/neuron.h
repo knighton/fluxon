@@ -38,6 +38,10 @@ class Neuron {
     // Set up a neuron choosing its own reasonable initial values.
     void InitDefaults(size_t num_neurons);
 
+    // Gather up our values to track high-level statistics.
+    void CollectStatistics(vector<float>* values,
+                           vector<float>* reliabilities) const;
+
   private:
     // Its activation (non-negative).  Zeroed after spiking.
     float value_;

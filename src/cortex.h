@@ -10,6 +10,8 @@ class Cortex {
   public:
     void Init(size_t num_neurons);
 
+    void Dump() const;
+
     void Tick();
 
   private:

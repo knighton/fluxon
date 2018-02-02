@@ -81,3 +81,9 @@ void Neuron::InitDefaults(size_t num_neurons) {
     MakeInitialOutputs(num_neurons, &out);
     InitValues(value, reliability, out);
 }
+
+void Neuron::CollectStatistics(vector<float>* values,
+                               vector<float>* reliabilities) const {
+    values->emplace_back(value_);
+    reliabilities->emplace_back(reliability_);
+}
