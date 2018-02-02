@@ -33,7 +33,7 @@ class Neuron {
 
     // Set up a neuron with the given initial values.
     void InitValues(float value, float reliability,
-                   const vector<pair<uint32_t, float>>& out);
+                    const vector<pair<uint32_t, float>>& out);
 
     // Set up a neuron choosing its own reasonable initial values.
     void InitDefaults(size_t num_neurons);
