@@ -27,24 +27,30 @@ class Neuron {
                                    vector<pair<uint32_t, float>>* out);
 
     // Accessors.
-    float value() const { return value_; }
+    float activation() const { return activation_; }
     float reliability() const { return reliability_; }
     const vector<pair<uint32_t, float>>& out() const { return out_; }
 
     // Set up a neuron with the given initial values.
-    void InitValues(float value, float reliability,
+    void InitValues(float activation, float reliability,
                     const vector<pair<uint32_t, float>>& out);
 
     // Set up a neuron choosing its own reasonable initial values.
     void InitDefaults(size_t num_neurons);
 
     // Gather up our values to track high-level statistics.
-    void CollectStatistics(vector<float>* values,
+    void CollectStatistics(vector<float>* activations,
                            vector<float>* reliabilities) const;
+
+    // Either carry our weight forward or send a spike.
+    void Step(size_t my_index, vector<float>* activ);
+
+    // Set activation.
+    void SetActivation(float activation);
 
   private:
     // Its activation (non-negative).  Zeroed after spiking.
-    float value_;
+    float activation_;
 
     // From 0 (spikes are pure noise) to 1 (spike at 1.0 with no noise).
     float reliability_;

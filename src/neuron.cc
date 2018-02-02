@@ -55,10 +55,10 @@ void Neuron::MakeInitialOutputs(size_t num_neurons,
 }
 
 void Neuron::InitValues(
-        float value, float reliability,
+        float activation, float reliability,
         const vector<pair<uint32_t, float>>& out) {
     out_.clear();
-    assert(0 <= value);
+    assert(0 <= activation);
     assert(0 <= reliability);
     assert(reliability <= 1);
     for (auto& it : out) {
@@ -66,7 +66,7 @@ void Neuron::InitValues(
         assert(0 < frac);
         assert(frac <= 1);
     }
-    value_ = value;
+    activation_ = activation;
     reliability_ = reliability;
     out_.reserve(out.size());
     for (auto& it : out) {
@@ -75,15 +75,47 @@ void Neuron::InitValues(
 }
 
 void Neuron::InitDefaults(size_t num_neurons) {
-    float value = MakeInitialValue();
+    float activation = MakeInitialValue();
     float reliability = MakeReliability();
     vector<pair<uint32_t, float>> out;
     MakeInitialOutputs(num_neurons, &out);
-    InitValues(value, reliability, out);
+    InitValues(activation, reliability, out);
 }
 
-void Neuron::CollectStatistics(vector<float>* values,
+void Neuron::CollectStatistics(vector<float>* activations,
                                vector<float>* reliabilities) const {
-    values->emplace_back(value_);
+    activations->emplace_back(activation_);
     reliabilities->emplace_back(reliability_);
+}
+
+void Neuron::Step(size_t my_index, vector<float>* activations) {
+    // Determine whether to spike.
+    //
+    // As reliability goes from 0 to 1:
+    // * Fade out a 5% chance of random spike.
+    // * Fade in a 100% chance of spike if reliability < activation.
+    bool spike;
+    if (Rand() < (1 - reliability_) * 0.05) {
+        spike = true;
+    } else if (Rand() < reliability_ && reliability_ / 2 + 0.5 < activation_) {
+        spike = true;
+    } else {
+        spike = false;
+    }
+
+    // Either propagate a spike, or just carry the weight over.
+    if (spike) {
+        for (size_t i = 0; i < out_.size(); ++i) {
+            auto& their_index = out_[i].first;
+            auto& weight = out_[i].second;
+            (*activations)[their_index] += weight;
+        }
+    } else {
+        (*activations)[my_index] = activation_;
+    }
+}
+
+void Neuron::SetActivation(float activation) {
+    assert(0 <= activation);
+    activation_ = activation;
 }

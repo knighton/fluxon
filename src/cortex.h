@@ -12,7 +12,7 @@ class Cortex {
 
     void Dump() const;
 
-    void Tick();
+    void Step();
 
   private:
     vector<Neuron> neurons_;

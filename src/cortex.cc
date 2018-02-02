@@ -14,15 +14,23 @@ void Cortex::Init(size_t num_neurons) {
 }
 
 void Cortex::Dump() const {
-    vector<float> values;
+    vector<float> activations;
     vector<float> reliabilities;
     for (auto& neuron : neurons_) {
-        neuron.CollectStatistics(&values, &reliabilities);
+        neuron.CollectStatistics(&activations, &reliabilities);
     }
-    Look("value", values);
+    Look("activation", activations);
     Look("reliability", reliabilities);
 }
 
-void Cortex::Tick() {
-    // TODO
+void Cortex::Step() {
+    vector<float> activations;
+    activations.resize(neurons_.size());
+    for (size_t i = 0; i < neurons_.size(); ++i) {
+        auto& neuron = neurons_[i];
+        neuron.Step(i, &activations);
+    }
+    for (size_t i = 0; i < activations.size(); ++i) {
+        neurons_[i].SetActivation(activations[i]);
+    }
 }
